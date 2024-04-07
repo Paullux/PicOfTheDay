@@ -24,6 +24,12 @@ appElement.innerHTML = `
 let dayOffset = 0;
 let jsonHistory = {};
 
+function getLocalDateString(date) {
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - (offset * 60000));
+  return localDate.toISOString().split('T')[0];
+}
+
 async function loadHistory() {
   try {
     const storedHistory = localStorage.getItem('jsonHistory');
@@ -38,7 +44,7 @@ async function generateFullHistory() {
 
   const dates = Object.keys(jsonHistory);
   if (dates.length === 0) {
-      jsonHistory[new Date().toISOString().split('T')[0]] = await fetchRandomImage();
+      jsonHistory[getLocalDateString(new Date()).split('T')[0]] = await fetchRandomImage();
   }
 
   let oldestDate = new Date(Math.min(...dates.map(date => new Date(date))));
@@ -80,7 +86,7 @@ async function updateImage(dayOffset) {
   await loadHistory();
   let targetDate = new Date();
   targetDate.setDate(targetDate.getDate() + dayOffset);
-  const dateString = targetDate.toISOString().split('T')[0];
+  const dateString = getLocalDateString(targetDate).split('T')[0];
   
   let imageInfo = jsonHistory[dateString];
   
@@ -112,7 +118,7 @@ async function updateImage(dayOffset) {
   let oldestDate = new Date(Math.min(...dates.map(date => new Date(date))));
 
   // Comparaison de la date cible avec la date la plus ancienne et aujourd'hui pour déterminer l'état des boutons
-  document.getElementById('previousPicButton').disabled = targetDate.toISOString().split('T')[0] <= oldestDate.toISOString().split('T')[0];
+  document.getElementById('previousPicButton').disabled = getLocalDateString(targetDate).split('T')[0] <= getLocalDateString(oldestDate).split('T')[0];
   document.getElementById('nextPicButton').disabled = dayOffset >= 0;
 
   // Affichage dateOfTheDay
