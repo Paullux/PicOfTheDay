@@ -7,9 +7,12 @@ const appElement = document.querySelector('#app');
 appElement.innerHTML = `
   <div>
     <h2 id="dateOfTheDay"></h2>
-    <a href="" target="_blank">
-      <img id="picOfDay" class="logo" alt="Pic Of The Day" />
-    </a>
+    <div>
+      <a id="imageLink" href="" target="_blank">
+        <img id="picOfDay" class="logo" alt="Pic Of The Day" />
+      </a>
+      <p id="photoCredit">Photo par <span id="photographerName"></span> sur <a href="https://unsplash.com" target="_blank">Unsplash</a></p>
+    </div>
     <div>
       <button id="previousPicButton">Image précédente</button>
       <button id="nextPicButton">Image suivante</button>
@@ -54,18 +57,24 @@ async function generateFullHistory() {
 
 async function fetchRandomImage() {
   try {
-    const result = await unsplash.photos.getRandom({});
-    if (result.errors) {
-      console.log('error occurred: ', result.errors[0]);
-    } else {
-      const photo = result.response;
-      const imageUrl = photo.urls.regular;
-      return imageUrl;
-    }
+      const result = await unsplash.photos.getRandom({});
+      if (result.errors) {
+          console.log('error occurred: ', result.errors[0]);
+      } else {
+          const photo = result.response;
+          const imageInfo = {
+              url: photo.urls.regular,
+              photographer: photo.user.name,
+              link: photo.links.html
+          };
+
+          return imageInfo; // retourner les informations de l'image pour une utilisation ultérieure
+      }
   } catch (error) {
-    console.error('Error loading the image:', error);
+      console.error('Error loading the image:', error);
   }
 }
+
 
 async function updateImage(dayOffset) {
   await loadHistory();
@@ -73,17 +82,24 @@ async function updateImage(dayOffset) {
   targetDate.setDate(targetDate.getDate() + dayOffset);
   const dateString = targetDate.toISOString().split('T')[0];
   
-  let imageUrl = jsonHistory[dateString];
-  if (!imageUrl && dayOffset < 0) { // If the image is not in the history and it's a past date, fetch a new random image
-    imageUrl = await fetchRandomImage();
-    jsonHistory[dateString] = imageUrl;
-    localStorage.setItem('jsonHistory', JSON.stringify(jsonHistory));
+  let imageInfo = jsonHistory[dateString];
+  
+  // Vérifiez si l'entrée existe et contient les informations nécessaires
+  if (!imageInfo || !imageInfo.url || !imageInfo.photographer || !imageInfo.link) {
+      imageInfo = await fetchRandomImage();
+      jsonHistory[dateString] = imageInfo;
+      localStorage.setItem('jsonHistory', JSON.stringify(jsonHistory));
   }
   
-  if (imageUrl) {
-    const imageElement = document.getElementById('picOfDay');
-    imageElement.src = imageUrl;
-    imageElement.closest('a').href = imageUrl;
+  if (imageInfo) {
+      const imageElement = document.getElementById('picOfDay');
+      imageElement.src = imageInfo.url;
+      imageElement.closest('a').href = imageInfo.link;
+
+      // Supposons que vous avez un élément pour afficher le nom du photographe
+      const photographerNameElement = document.getElementById('photographerName');
+      photographerNameElement.textContent = `Photo by ${imageInfo.photographer}`;
+      photographerNameElement.href = imageInfo.link; // Créez un lien vers la page Unsplash du photographe
   }
 
   // Récupération de la date actuelle
@@ -112,9 +128,10 @@ async function updateImage(dayOffset) {
   const firstLetterCap = firstLetter.toUpperCase();
   const remainingLetters = dateOfTheDay.slice(1);
   const capitalizedDateOfTheDay = firstLetterCap + remainingLetters;
-
+  
   document.getElementById('dateOfTheDay').innerHTML = capitalizedDateOfTheDay;
 }
+
 
 document.getElementById('previousPicButton').addEventListener('click', () => {
   dayOffset--;

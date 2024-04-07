@@ -94,3 +94,11 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@media (max-width: 1010px) {
+  #picOfDay {
+      width: 75vw !important;
+      height: auto !important;
+  }
+}
+ 
