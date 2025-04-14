@@ -1,16 +1,44 @@
-# Logs
-logs
+# Node modules (frontend & backend)
+**/node_modules/
+
+# Builds
+**/dist/
+**/.vite/
+
+# Environnements
+**/.env
+**/.env.*
+
+# Lockfile global (si tu veux éviter celui à la racine)
+package-lock.json
+
+# Fichiers temporaires & logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Cache local de Vite / npm
+**/.cache/
+.vite/
+.pnpm-debug.log
+
+# Historique de cache backend (évite de versionner les données dynamiques)
+backend/history.json
+
+# Systèmes
+.DS_Store
+Thumbs.db
+
+# Docker
+**/.dockerignore
+
+# VS Code / IDEs
+.vscode/
+.idea/
+
+# Git
+.git/
 
 # Editor directories and files
 .vscode/*
