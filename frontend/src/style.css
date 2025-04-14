@@ -101,4 +101,14 @@ button:focus-visible {
       height: auto !important;
   }
 }
- 
+
+.error-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #e63946;
+  border-radius: 8px;
+  background-color: #ffdddd;
+  color: #e63946;
+  font-weight: bold;
+}
+
