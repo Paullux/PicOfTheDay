@@ -1,31 +1,41 @@
-# Daily Pic with History Showcase
+# 📸 Pic of the Day – Daily Random Photo Viewer
 
-## English
+![Screenshot](./frontend/public/screenshot.png)
 
-### Description
-Daily Pic with History Showcase is a web application that displays a random picture of the day and keeps a history of previously displayed pictures. Users can navigate through past pictures to relive the visual journey.
+[🌐 Go to site](https://pic-of-the-day.paulwoisard.fr/)
 
-### Features
-- Show a new random picture every day.
-- Navigate through the history of pictures.
-- Responsive design for desktop and mobile devices.
+## 🇬🇧 English
 
-### How to Use
-Simply visit the website, and the picture of the day will be displayed. Use the "Previous" and "Next" buttons to navigate through the picture history.
+### 📖 Description
+**Pic of the Day** is a web application that displays a new random image each day and keeps a history of previously shown pictures. Users can navigate back in time to revisit past images and enjoy a visual journey.
+
+### ✨ Features
+- 📅 Daily random picture display
+- ⏮️ Navigation through the image history
+- 📱 Responsive design (desktop & mobile)
+- 🧠 Smart caching and quota-aware image fetching
+
+### 🚀 How to Use
+Just visit the site and enjoy the picture of the day. Use the **Previous** and **Next** buttons to browse past and future images.
 
 ---
 
-## Photo quotidienne avec un historique
+# Photo du jour - Visualisation quotidienne de photos aléatoires
 
-## Français
+![Screenshot](./frontend/public/screenshot.png)
 
-### Description
-Photo quotidienne avec un historique est une application web qui affiche une image aléatoire du jour et conserve un historique des images précédemment affichées. Les utilisateurs peuvent naviguer à travers les images passées pour revivre le voyage visuel.
+[🌐 Accéder au site](https://pic-of-the-day.paulwoisard.fr/)
 
-### Fonctionnalités
-- Affiche une nouvelle image aléatoire chaque jour.
-- Naviguer à travers l'historique des images.
-- Design responsive pour les appareils de bureau et mobiles.
+## 🇫🇷 Français
 
-### Comment utiliser
-Visitez simplement le site web, et l'image du jour sera affichée. Utilisez les boutons "Précédent" et "Suivant" pour naviguer dans l'historique des images.
+### 📖 Description
+**Photo du jour** est une application web qui affiche une image aléatoire chaque jour et conserve un historique des images précédentes. Vous pouvez naviguer dans le passé pour revivre un voyage visuel.
+
+### ✨ Fonctionnalités
+- 📅 Affiche une nouvelle image aléatoire chaque jour
+- ⏮️ Navigation dans l’historique des images
+- 📱 Design responsive (ordinateur et mobile)
+- 🧠 Mise en cache intelligente et respect des quotas d’API
+
+### 🚀 Comment utiliser
+Rendez-vous simplement sur le site et admirez la photo du jour. Utilisez les boutons **Précédent** et **Suivant** pour explorer l’historique des images.
