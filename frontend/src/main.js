@@ -50,7 +50,8 @@ async function fetchRandomImage() {
     return {
       url: photo.url,
       photographer: photo.photographer,
-      link: photo.link
+      link: photo.link,
+      source: photo.source || 'unsplash' // ← AJOUT ESSENTIEL ICI
     };
   } catch (error) {
     errorBox.textContent = "Une erreur s’est produite. Veuillez réessayer plus tard.";
@@ -99,6 +100,7 @@ async function generateFullHistory() {
 
 async function updateImage(dayOffset) {
   await loadHistory();
+
   const targetDate = new Date();
   targetDate.setDate(targetDate.getDate() + dayOffset);
   const dateString = getLocalDateString(targetDate);
@@ -106,7 +108,7 @@ async function updateImage(dayOffset) {
   const imageContainer = document.getElementById('imageContainer');
   const errorMessage = document.getElementById('errorMessage');
   errorMessage.style.display = 'none';
-  imageContainer.innerHTML = ''; // Nettoyage du conteneur image
+  imageContainer.innerHTML = '';
 
   let imageInfo = jsonHistory[dateString];
 
@@ -123,27 +125,39 @@ async function updateImage(dayOffset) {
     localStorage.setItem('jsonHistory', JSON.stringify(jsonHistory));
   }
 
-  // Affichage de l'image et des infos dans imageContainer
+  let sourceName = 'Unsplash';
+  let sourceUrl = 'https://unsplash.com';
+  let licenseText = 'Licence Unsplash — usage libre, attribution conseillée';
+
+  if (imageInfo.url?.includes('pixabay.com')) {
+    sourceName = 'Pixabay';
+    sourceUrl = 'https://pixabay.com';
+    licenseText = 'Licence Pixabay — usage commercial autorisé, attribution non requise';
+  }
+
   imageContainer.innerHTML = `
     <a id="imageLink" href="${imageInfo.link}" target="_blank">
       <img id="picOfDay" class="logo" src="${imageInfo.url}" alt="Pic Of The Day" />
     </a>
     <p id="photoCredit">
       Photo par <span id="photographerName">${imageInfo.photographer}</span> sur 
-      <a href="https://unsplash.com" target="_blank">Unsplash</a>
+      <a href="${sourceUrl}" target="_blank">${sourceName}</a>
+      <br />
+      <small style="font-size: 0.8em; color: #888;">
+        <span title="${licenseText}" style="cursor: help;">ⓘ Informations sur la licence</span>
+      </small>
     </p>
   `;
 
-  // Gestion des boutons
   const dates = Object.keys(jsonHistory);
   const oldestDate = new Date(Math.min(...dates.map(date => new Date(date))));
   document.getElementById('previousPicButton').disabled = getLocalDateString(targetDate) <= getLocalDateString(oldestDate);
   document.getElementById('nextPicButton').disabled = dayOffset >= 0;
 
-  // Affichage de la date
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const dateOfTheDay = targetDate.toLocaleDateString('fr-FR', options);
-  document.getElementById('dateOfTheDay').textContent = dateOfTheDay.charAt(0).toUpperCase() + dateOfTheDay.slice(1);
+  document.getElementById('dateOfTheDay').textContent =
+    dateOfTheDay.charAt(0).toUpperCase() + dateOfTheDay.slice(1);
 }
 
 document.getElementById('previousPicButton').addEventListener('click', () => {

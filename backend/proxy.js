@@ -1,73 +1,78 @@
-import express from "express";
-import cors from "cors";
-import fetch from "node-fetch";
-import dotenv from "dotenv";
+import express from 'express';
+import dotenv from 'dotenv';
+import fetch from 'node-fetch';
+import fs from 'fs';
 
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
-const ONE_HOUR = 60 * 60 * 1000;
+const port = process.env.PORT || 3000;
+const PIXABAY_KEY = process.env.PIXABAY_KEY;
+const CACHE_FILE = './history.json';
+const CACHE_DURATION_MS = 60 * 60 * 1000; // 1h
 
-let cache = {
-  timestamp: 0,
-  data: null,
-  failed: false,
-};
+// Chargement du cache depuis le fichier
+let cache = {};
+if (fs.existsSync(CACHE_FILE)) {
+  try {
+    cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+  } catch (err) {
+    console.error('Erreur lecture du cache JSON :', err);
+  }
+}
 
-app.use(cors());
-
-app.get("/api/photo", async (req, res) => {
+// Route d'API
+app.get('/api/photo', async (req, res) => {
   const now = Date.now();
 
-  if (cache.failed && now - cache.timestamp < ONE_HOUR) {
-    return res.status(429).json({
+  // S'il y a une image en cache de moins d'une heure
+  if (cache.timestamp && (now - cache.timestamp < CACHE_DURATION_MS) && cache.image) {
+    return res.json(cache.image);
+  }
+
+  // Si une erreur précédente a été enregistrée
+  if (cache.error && (now - cache.error < CACHE_DURATION_MS)) {
+    return res.status(503).json({
       error: true,
-      message: "Erreur temporaire : trop de demandes. Revenez dans une heure.",
+      message: "Erreur temporaire : impossible de récupérer une image. Revenez dans une heure.",
     });
   }
 
-  if (cache.data && now - cache.timestamp < ONE_HOUR) {
-    return res.json(cache.data);
-  }
-
   try {
-    const response = await fetch(
-      `https://api.unsplash.com/photos/random?client_id=${process.env.VITE_ACCESS_KEY}`
-    );
-
-    if (!response.ok) throw new Error("Erreur Unsplash");
-
+    const response = await fetch(`https://pixabay.com/api/?key=${PIXABAY_KEY}&image_type=photo&per_page=100`);
     const data = await response.json();
 
-    const formatted = {
-      url: data.urls.regular,
-      photographer: data.user.name,
-      link: data.links.html,
+    if (!data.hits || data.hits.length === 0) {
+      throw new Error("Aucune image trouvée");
+    }
+
+    const randomImage = data.hits[Math.floor(Math.random() * data.hits.length)];
+
+    const imageData = {
+      url: randomImage.largeImageURL,
+      photographer: randomImage.user,
+      link: randomImage.pageURL,
     };
 
     cache = {
       timestamp: now,
-      data: formatted,
-      failed: false,
+      image: imageData,
     };
 
-    res.json(formatted);
-  } catch (error) {
-    console.error("Erreur proxy Unsplash:", error);
-    cache = {
-      timestamp: now,
-      data: null,
-      failed: true,
-    };
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
+    res.json(imageData);
+  } catch (err) {
+    console.error('Erreur lors de la récupération de l’image Pixabay :', err.message);
+    cache.error = now;
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
 
-    res.status(429).json({
+    res.status(503).json({
       error: true,
       message: "Erreur temporaire : impossible de récupérer une image. Revenez dans une heure.",
     });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Serveur proxy en ligne sur http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Backend en écoute sur http://localhost:${port}`);
 });
