@@ -15,6 +15,12 @@
 - 📱 Responsive design (desktop & mobile)
 - 🧠 Smart caching and quota-aware image fetching
 
+### 📦 Tech stack
+- Frontend: Vite + Vanilla JS + CSS
+- Backend: Node.js + Express (image proxy/cache)
+- APIs: Unsplash + Pixabay
+- Containerized: Docker & DockerHub
+  
 ### 🚀 How to Use
 Just visit the site and enjoy the picture of the day. Use the **Previous** and **Next** buttons to browse past and future images.
 
@@ -39,3 +45,13 @@ Just visit the site and enjoy the picture of the day. Use the **Previous** and *
 
 ### 🚀 Comment utiliser
 Rendez-vous simplement sur le site et admirez la photo du jour. Utilisez les boutons **Précédent** et **Suivant** pour explorer l’historique des images.
+
+### 📦 Technologies utilisées
+- Frontend : Vite + JavaScript Vanilla + CSS
+- Backend : Node.js + Express (proxy/cache image)
+- APIs : Unsplash + Pixabay
+- Conteneurisation : Docker & DockerHub
+
+### 🔧 Déploiement
+- Serveur VPS avec Docker  
+- Frontend & backend déployés via containers  
